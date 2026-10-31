@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workstation Lens</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0c121b;--panel:#151e2b;--line:#293848;--ink:#ecf3fc;--muted:#97aac0;--blue:#72b9ff;--mint:#66d9bb;--amber:#eab36d;--violet:#b59eff}
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,"Segoe UI",sans-serif}
+    body{background:radial-gradient(ellipse at 50% -24%,#1c3145 0%,transparent 65%),var(--bg)}
+    button,select,input{font:inherit;color:var(--ink)}
+    button,select,input{background:#1c2a39;border:1px solid #3d5065;border-radius:9px;padding:9px 12px}
+    button{cursor:pointer}button:hover,.download:hover{border-color:var(--blue);background:#273a4e}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+    main{max-width:1450px;margin:0 auto;padding:24px 28px 44px}
+    header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:30px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:35px;height:35px;background:linear-gradient(135deg,#2369a9,#42beb1);display:grid;place-items:center;border-radius:11px;box-shadow:0 5px 24px #267bb444}
+    .logo svg{width:22px;height:22px}
+    h1{font-size:21px;font-weight:680;letter-spacing:-.55px;margin:0}
+    .status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;margin-top:3px}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px #64c9ad16}
+    .actions{display:flex;gap:9px;align-items:center}
+    .range-wrap{position:relative;display:flex;align-items:center;gap:8px}
+    .range-picker{position:absolute;right:calc(100% + 12px);top:0;z-index:20;width:255px;padding:15px;
+      background:#1b2a3b;border:1px solid #45627b;border-radius:12px;box-shadow:0 12px 32px #0008}
+    .range-picker label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);margin-bottom:10px}
+    .range-picker input{width:100%;min-width:0}
+    .range-picker-actions{display:flex;gap:7px;justify-content:flex-end}
+    .range-error{color:#ffb0ad;font-size:12px;margin:7px 0}
+    #custom-edit{font-size:17px;padding:7px 10px}
+    #range{max-width:min(360px,58vw)}
+    select{min-width:130px}
+    .primary{background:#2f83c8;border-color:#408bd0;font-weight:650;color:#fff;text-decoration:none;
+      display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:8px 14px;border-radius:9px}
+    .primary:hover{background:#4299d8}
+    .section-label{font-size:12px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px}
+    .insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:25px}
+    .insight,.panel{background:linear-gradient(145deg,#172230,#141c28);border:1px solid var(--line);border-radius:14px}
+    .insight{padding:16px 17px;min-width:0}
+    .insight-label{font-size:12px;color:var(--muted)}
+    .insight-value{font-size:26px;font-weight:670;font-variant-numeric:tabular-nums;letter-spacing:-.85px;margin:7px 0 3px}
+    .insight-sub{font-size:11px;color:var(--muted)}
+    .charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .panel{padding:18px 20px 12px;min-width:0}
+    .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+    h2{font-size:15px;font-weight:640;margin:0;letter-spacing:-.15px}
+    .legend{display:flex;gap:13px;flex-wrap:wrap;color:var(--muted);font-size:11px;justify-content:flex-end}
+    .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+    .plot{position:relative;min-height:267px}
+    canvas{width:100%;height:267px;display:block;touch-action:pan-y;cursor:crosshair}
+    .tooltip{position:absolute;z-index:2;pointer-events:none;background:#0a1320f2;border:1px solid #4a6178;border-radius:9px;padding:9px 11px;font:12px/1.5 system-ui, sans-serif;box-shadow:0 8px 22px #0008;min-width:155px}
+    .tooltip-time{font-weight:650;margin-bottom:5px;color:#e8f4ff}
+    .tooltip-row{display:flex;align-items:center;justify-content:space-between;gap:18px;color:#c5d7e9}
+    .tooltip-row strong{font-variant-numeric:tabular-nums;color:#fff}
+    .tooltip-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+    .foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:20px;font-size:12px;color:var(--muted)}
+    .history-info{position:relative;display:inline-flex;vertical-align:middle;align-items:center}
+    .history-info summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;justify-content:center;
+      width:17px;height:17px;border:1px solid #4b6982;border-radius:50%;color:#b8cde0;font-size:11px;margin-left:5px}
+    .history-info summary::-webkit-details-marker{display:none}
+    .history-info[open] .history-popup{display:block}
+    .history-popup{position:absolute;left:0;bottom:calc(100% + 10px);width:290px;max-width:calc(100vw - 35px);
+      padding:12px 14px;border:1px solid #466078;border-radius:10px;background:#17283a;box-shadow:0 8px 20px #0009;
+      color:#d2e4f5;font-size:12px;line-height:1.6;z-index:5}
+    .history-popup p{margin:0 0 7px}.history-popup p:last-child{margin-bottom:0}
+    #error{color:#ff9b9b}
+    @media(max-width:960px){.insights{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr}}
+    @media(max-width:600px){main{padding:17px 13px}.insights{gap:8px}.insight{padding:12px}.insight-value{font-size:22px}.panel{padding:15px 12px 8px}.panel-head{flex-wrap:wrap}.legend{justify-content:flex-start}.plot,canvas{height:225px;min-height:225px}.range-picker{right:0;top:calc(100% + 10px)}}
+  </style>
+</head>
+<body>
+<main>
+  <div id="update-host"></div>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15h4l3-9 4 13 3-8h4" stroke="white" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><h1>Workstation Lens</h1><div class="status"><span class="status-dot" id="status-dot"></span><span id="connection">Connecting…</span><span id="recorded-status"></span></div></div>
+    </div>
+    <div class="actions">
+      <div class="range-wrap" id="range-wrap">
+        <button id="custom-edit" type="button" hidden aria-label="Edit selected custom dates" title="Edit custom dates">▦</button>
+        <select id="range" aria-label="History range"><option value="1">1 hour</option><option value="24" selected>24 hours</option><option value="168">7 days</option><option value="336">14 days</option><option value="720">30 days</option><option value="2160">90 days</option><option value="custom">Custom…</option></select>
+        <form class="range-picker" id="custom-picker" hidden>
+          <label>From (local)<input id="custom-from" type="datetime-local" required></label>
+          <label>To (local)<input id="custom-to" type="datetime-local" required></label>
+          <p class="range-error" id="custom-error" hidden></p>
+          <div class="range-picker-actions"><button type="button" id="custom-cancel">Cancel</button><button type="submit" class="primary">Apply</button></div>
+        </form>
+      </div>
+      <a class="primary" id="export-download" href="/api/export/bundle?hours=24" download>Export</a>
+    </div>
+  </header>
+  <div class="section-label">Current usage <span style="font-weight:400;text-transform:none;letter-spacing:0">· pressure over selected period below</span></div>
+  <div class="insights">
+    <div class="insight"><div class="insight-label">CPU</div><div id="cpu-live" class="insight-value">Starting…</div><div id="cpu-high" class="insight-sub">≥80% · waiting for history</div></div>
+    <div class="insight"><div class="insight-label" title="Windows measures the busiest GPU engine, rather than CUDA SM utilisation.">GPU</div><div id="gpu-live" class="insight-value">Starting…</div><div id="gpu-high" class="insight-sub">≥75% · waiting for history</div></div>
+    <div class="insight"><div class="insight-label">RAM</div><div id="ram-live" class="insight-value">Starting…</div><div id="ram-high" class="insight-sub">≥75% · waiting for history</div></div>
+    <div class="insight"><div class="insight-label">VRAM</div><div id="vram-live" class="insight-value">Starting…</div><div id="vram-high" class="insight-sub">≥75% · waiting for history</div></div>
+  </div>
+  <div class="section-label">History · hover to inspect</div>
+  <div class="charts">
+    <section class="panel"><div class="panel-head"><h2>Compute</h2><div class="legend"><span><i style="background:var(--blue)"></i>CPU</span><span><i style="background:var(--mint)"></i>GPU</span></div></div><div class="plot"><canvas id="compute-chart" aria-label="Historical CPU and GPU load" role="img"></canvas><div class="tooltip" hidden></div></div></section>
+    <section class="panel"><div class="panel-head"><h2>Memory</h2><div class="legend"><span><i style="background:var(--amber)"></i>RAM</span><span><i style="background:var(--violet)"></i>VRAM</span></div></div><div class="plot"><canvas id="memory-chart" aria-label="Historical RAM and VRAM" role="img"></canvas><div class="tooltip" hidden></div></div></section>
+    <section class="panel"><div class="panel-head"><h2 title="Pages read from storage when Windows needs memory-backed data. Spikes do not always mean too little RAM.">Memory paging</h2><div class="legend"><span><i style="background:var(--mint)"></i>Reads/s</span></div></div><div class="plot"><canvas id="paging-chart" aria-label="Historical Windows memory page reads per second" role="img"></canvas><div class="tooltip" hidden></div></div></section>
+    <section class="panel"><div class="panel-head"><h2>Storage latency</h2><div class="legend"><span><i style="background:var(--blue)"></i>Read</span><span><i style="background:var(--amber)"></i>Write</span></div></div><div class="plot"><canvas id="storage-chart" aria-label="Historical read/write latency" role="img"></canvas><div class="tooltip" hidden></div></div></section>
+  </div>
+  <footer class="foot"><span>Charts update every 15s · Up to 90 days of history
+    <details class="history-info" id="history-info"><summary aria-label="How history is stored" title="How history is stored">i</summary>
+      <div class="history-popup">
+        <p>The collector starts sampling immediately and shows its first reliable CPU reading after a brief warm-up. Recent chart points update every 15 seconds; older values are stored as 1-minute averages.</p>
+        <p>System and app trends: 90 days. Individual process details: 14 days to keep storage usage low.</p>
+      </div>
+    </details></span><span id="error"></span></footer>
+</main>
+<script src="/assets/clemar-update-banner.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

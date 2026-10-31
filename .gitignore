@@ -1,0 +1,57 @@
+# .NET build output and IDE state
+**/bin/
+**/obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.rsuser
+*.sln.docstates
+TestResults/
+coverage/
+
+# Python helper caches
+**/__pycache__/
+*.py[cod]
+.venv/
+
+# Local monitoring data (never commit user history)
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+
+# Exported evidence, logs and release packages
+*.csv
+*.zip
+*.nupkg
+*.exe
+*.log
+logs/
+artifacts/
+release-build/
+releases/
+publish/
+/evidence.json
+/report.md
+
+# Local settings and signing materials
+.env
+.env.*
+!.env.example
+*.local.json
+appsettings.*.local.json
+*.pfx
+*.p12
+*.snk
+*.pem
+*.key
+
+# OS leftovers
+Thumbs.db
+.DS_Store
