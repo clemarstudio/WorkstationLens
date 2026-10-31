@@ -66,17 +66,17 @@ The dashboard opens at [http://127.0.0.1:18765](http://127.0.0.1:18765). Once st
 
 ## How lightweight is it?
 
-I measured the collector on one Windows 11 workstation while it was monitoring roughly 500 processes:
+I checked the collector on **31 October 2026, around 19:00 UTC**, on a Windows 11 workstation with 32 logical processors and roughly 500 running processes. These are short spot measurements, **not a 24-hour CPU or RAM benchmark**:
 
-| Measurement | Observed |
-|---|---|
-| RAM working set | About **145–148 MiB** |
-| Private memory | About **70–73 MiB** |
-| CPU | About **0.01% of total CPU** in one 20-second sample on a 32-logical-processor PC; occasional short activity |
-| Collection time | Roughly **19–51 ms** for each 15-second sample |
-| Local history database | Around **108 MiB** plus a **5 MiB** SQLite write-ahead log during this pilot |
+| Measurement | Observed | Measurement window |
+|---|---|---|
+| RAM working set | About **145–148 MiB** | Spot readings during approximately one minute |
+| Private memory | About **70–73 MiB** | Same short observation period |
+| CPU | About **0.01% of total CPU** | One **20-second** interval; occasional short activity |
+| Collection time | Roughly **19–51 ms** | Several individual collection passes, scheduled every 15 seconds |
+| Local history database | Around **108 MiB**, plus a **5 MiB** SQLite write-ahead log | Point-in-time size after about **1,990 recorded machine-minutes (33 hours)** accumulated since 29 October 2026 |
 
-These are measurements from *one machine*, not guaranteed limits. CPU, memory and database size depend on the system, process count and retention history. The collector is deliberately light, but the history still takes some disk space.
+The database had accumulated measurements over roughly **55 hours of wall-clock time**, with gaps where no data was recorded; it was **not a 90-day database-size test**. These figures come from *one machine*, not guaranteed limits or a sustained-load benchmark. CPU, memory and database size depend on the system, process count and retention history.
 
 The unsigned **self-contained installer test** was about **72 MiB**. Most of that is the bundled .NET / Windows runtime, not the application itself; a framework-dependent publish was about 2.8 MiB, but requires compatible runtimes already installed. No unsigned test installer is being offered as a public release.
 
