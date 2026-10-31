@@ -42,13 +42,13 @@ The ZIP contains four files:
 | `workstation-lens-records.csv` | Detailed records for Excel or your own analysis |
 | `README.txt` | Short guide to the files, columns and units |
 
-I usually start by attaching `report.md` and `evidence.json` to my LLM, with a specific question. For example:
+I usually start by attaching `report.md` and `evidence.json` to my LLM, with a specific question. For example, if I were considering downsizing a workstation:
 
-> Based on these measurements, where does my PC seem overprovisioned? Quote the numbers you used, distinguish observations from guesses, and tell me what I should benchmark before downgrading any hardware.
+> My current PC has 96 GiB RAM and 32 GiB GPU VRAM. Could a 32 GiB RAM / 24 GiB VRAM machine handle the same work? Use the measurements to explain the risks, but don't treat memory usage as a hard minimum requirement. Note missing observations and suggest what to benchmark before buying.
 
 ![Example analysis of a Workstation Lens export](docs/screenshots/llm-analysis-example.png)
 
-*Example LLM-style analysis using anonymized aggregates from a real local export. Recreated for documentation; not a screenshot of a third-party chat.*
+*Illustrative LLM-style analysis using anonymized measurements from a real local export. The 49.4 GiB peak was measured on the original 96 GiB RAM PC, not the proposed 32 GiB machine. Recreated for documentation; not a screenshot of a third-party chat.*
 
 The CSV contains machine, application and PID rows in one file; filter by `record_type`. Empty cells mean unavailable or not applicable, **not zero**.
 
