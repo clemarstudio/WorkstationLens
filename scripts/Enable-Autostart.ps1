@@ -1,14 +1,15 @@
 # Register a per-user, non-elevated logon task for the local collector.
 $ErrorActionPreference = 'Stop'
 $taskName = 'Workstation Lens - Auto Start'
-$launcher = Join-Path $PSScriptRoot 'Start-Lens.ps1'
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$launcher = Join-Path $repoRoot 'Start-Lens.ps1'
 $user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 if (-not (Test-Path -LiteralPath $launcher)) { throw "Launcher is missing: $launcher" }
 
 $powershell = Join-Path $PSHOME 'powershell.exe'
 $arguments = '-NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File "' +
     $launcher + '" -NoBrowser'
-$action = New-ScheduledTaskAction -Execute $powershell -Argument $arguments -WorkingDirectory $PSScriptRoot
+$action = New-ScheduledTaskAction -Execute $powershell -Argument $arguments -WorkingDirectory $repoRoot
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
 $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -MultipleInstances IgnoreNew -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 2)

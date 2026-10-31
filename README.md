@@ -62,7 +62,7 @@ Requires **Windows 11 x64** and the **.NET 10 SDK**. Download this repository (u
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Start-Lens.ps1
 ```
 
-The dashboard opens at [http://127.0.0.1:18765](http://127.0.0.1:18765). Once started, you can close the browser and leave the collector running. To stop it, use `Stop-Lens.cmd`. The optional `Enable-Autostart.ps1` script sets up a per-user Windows logon task; `Disable-Autostart.ps1` removes it.
+The dashboard opens at [http://127.0.0.1:18765](http://127.0.0.1:18765). Once started, you can close the browser and leave the collector running. To stop it, use `Stop-Lens.cmd`. Both `.cmd` files are shortcuts for the matching PowerShell scripts. For optional launch at Windows sign-in, use `scripts/Enable-Autostart.ps1` or `scripts/Disable-Autostart.ps1`; these are not needed for normal use.
 
 ## How lightweight is it?
 
@@ -87,6 +87,10 @@ Everything is recorded in `%LOCALAPPDATA%\WorkstationLens\measurements.db`. The 
 Exports can include application names and any workload notes you enter. Check the files before attaching them to an online service. The collector doesn't capture document names, command lines, browser URLs or window titles.
 
 GPU percentages reflect Windows WDDM engines, not CUDA compute occupancy. Per-process GPU memory attribution is not the same as total physical VRAM. Short spikes between samples may be missed. These limitations are noted in the exported report so an LLM has a better chance of interpreting the evidence correctly.
+
+## For contributors
+
+`WorkstationLens.App/` contains the collector and local dashboard; `UpdateKit/` contains the update integration. `tests/Smoke-Test.ps1` checks the running API and exports, while `UpdateKit.Tests/` tests the updater without installing it. `scripts/Pack-Windows.ps1` is for packaging signed releases. These developer tools are **not required to run the app**.
 
 ## License
 

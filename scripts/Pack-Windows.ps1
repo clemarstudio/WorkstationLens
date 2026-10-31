@@ -43,7 +43,7 @@ try {
         try {
             Remove-Item -LiteralPath $output -Force -Recurse -ErrorAction Stop
         } catch [System.IO.IOException] {
-            throw "The test folder is locked (e.g. open Windows Sandbox). Use Prepare-Customer-Test.ps1 -TestSlot customer-test-v2 to package into another isolated folder."
+            throw "The test folder is locked (e.g. open Windows Sandbox). Choose a fresh -TestSlot customer-test-v2 for another isolated output folder."
         }
     }
     New-Item -ItemType Directory -Path $publish,$output -Force | Out-Null
