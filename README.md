@@ -54,9 +54,11 @@ The CSV contains machine, application and PID rows in one file; filter by `recor
 
 ## Try it
 
-**Current status:** source preview. The signed Windows installer and tested signed-upgrade path are not published yet; please build from source for now.
+Download [Workstation Lens v1.0.0](https://github.com/clemarstudio/WorkstationLens/releases/tag/v1.0.0), or get the [Windows x64 installer directly](https://github.com/clemarstudio/WorkstationLens/releases/download/v1.0.0/Clemar.WorkstationLens-win-Setup.exe). The installer bundles the .NET 10 runtime; you do not need the .NET SDK to run it. A portable ZIP and SHA-256 checksums are also available on the release page.
 
-Requires **Windows 11 x64** and the **.NET 10 SDK**. Download this repository (using **Code → Download ZIP** on GitHub), extract it, then open PowerShell in the extracted folder:
+Requires **Windows 11 x64**. The installer and main application executable are signed and timestamped; Windows displays **Siu Bong Pang** as the publisher. Other bundled components retain their existing signature state. The final signed installer has passed signature and package checks, but isolated clean-install and signed-upgrade acceptance testing is still pending; see the release notes.
+
+To **build and run from source**, install the **.NET 10 SDK**, download this repository (using **Code → Download ZIP** on GitHub), extract it, then open PowerShell in the extracted folder:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Start-Lens.ps1
