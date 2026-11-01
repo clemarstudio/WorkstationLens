@@ -54,6 +54,12 @@ Attach `report.md` and `evidence.json` to the LLM of your choice (optionally the
 
 > My game stuttered / CAD became slow around [date and time]. Using only the recorded evidence in this export, did any background applications consume unusual CPU, memory or I/O? Was there sustained CPU/GPU pressure, a busy core, RAM/VRAM pressure, paging or high storage latency? Separate observations from possible explanations, flag missing measurements, and suggest controlled checks before I change software or buy hardware. Do not assume a process is malicious just because it used resources.
 
+**Illustrative example: Is upgrading actually necessary?** This example uses anonymized aggregate readings from a real Workstation Lens export, but the game-stutter/CAD-slowdown question is hypothetical. With no specific lag event identified, the analysis suggests what to check before buying hardware rather than pretending to know the cause.
+
+![Illustrative LLM analysis asking whether a slow gaming or CAD PC needs a hardware upgrade](docs/screenshots/upgrade-analysis-example.png)
+
+*Recreated for documentation; not a screenshot of a third-party chat. The measurements describe a real workstation, but do not establish that a game or CAD slowdown occurred during the observed period.*
+
 Use the actual time zone when describing when the slowdown occurred; the export reports timestamps in UTC. Application summaries are aggregated over 15-minute periods, while individual process details are stored per minute, so not every 15-second spike can be attributed to a particular process.
 
 **Your data stays local until you decide to share it.** Workstation Lens does not call an LLM itself. Check application names and any workload notes in the export before uploading it to an external service. Empty CSV fields mean unavailable or not applicable, **not zero**.
