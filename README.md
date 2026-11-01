@@ -1,25 +1,33 @@
 # Workstation Lens
 
-**A local workload history for Windows — useful when you want to ask an LLM what your PC actually needs.**
+**Game stuttering? CAD slowing down? Was it a busy background app, or is your PC running out of resources?**
 
-Task Manager is good at telling me what's happening *right now*. I wanted something that would remember what happened while I was working, gaming, running local AI models or leaving background jobs on overnight.
+By the time you open Task Manager, the spike may already be gone. Workstation Lens keeps a local history of Windows resource use, so you can look back at a slow period instead of guessing whether to close a background program, investigate Windows, or buy new hardware.
 
-Workstation Lens quietly records resource usage over time. You can inspect the trends in a local dashboard, then export a time range and give the evidence to ChatGPT, Claude or another LLM of your choice. There is no account, API key or built-in cloud connection.
+It records CPU, GPU, RAM, VRAM, memory paging and storage-latency trends, plus application and process activity. Explore the history in a browser dashboard, or export the evidence for ChatGPT, Claude or another LLM to help investigate. **No account, subscription, API key or automatic cloud upload.**
+
+**[Download Workstation Lens v1.0.0 for Windows](https://github.com/clemarstudio/WorkstationLens/releases/tag/v1.0.0)** | [Direct Windows x64 installer](https://github.com/clemarstudio/WorkstationLens/releases/download/v1.0.0/Clemar.WorkstationLens-win-Setup.exe)
 
 ![Workstation Lens dashboard](docs/screenshots/dashboard.png)
 
-*The single-page dashboard: current CPU/GPU/RAM/VRAM usage and interactive history charts.*
+*Local dashboard showing current CPU/GPU/RAM/VRAM usage and historical resource pressure.*
 
-## What can I use it for?
+## What can I investigate?
 
-A few examples of questions I wanted to answer:
+- **Unexpected background activity:** Did a game, CAD session or other demanding task overlap with a background process consuming CPU, memory or I/O?
+- **Possible hardware pressure:** Were CPU or GPU engines busy, was one CPU core heavily loaded, or did RAM/VRAM use, paging or storage latency rise?
+- **Repeatable slowdowns:** Do similar spikes appear when the same task slows down again, or only when certain background apps are running?
+- **Before spending money:** Is there a software/workload interaction worth testing before deciding that more RAM, a faster CPU or a new GPU is the answer?
 
-- Is 16 or 24 GB of VRAM enough for the local AI workloads I actually run?
-- Which applications keep consuming CPU, memory or I/O long after I finish using them?
-- Would a workstation with less RAM still handle my usual work?
-- Is a background job light enough to move to a smaller always-on machine?
+### A practical troubleshooting workflow
 
-The tool collects evidence, **not automatic hardware recommendations**. CPU utilisation on one computer cannot predict how fast a different CPU will finish a task. I still use real task timings and controlled comparisons before making hardware decisions.
+1. Let Workstation Lens record while you work or play; you can close the dashboard and leave the collector running.
+2. When the PC feels slow, note roughly **when** it happened and what application you were using.
+3. Reopen the dashboard, select that period (or a custom date/time range), and inspect the trends.
+4. Export the selected range to review application and per-process evidence, or ask an LLM to compare it with the machine-wide measurements.
+5. Test the most plausible explanation under similar conditions before disabling software, changing settings or upgrading hardware.
+
+**Evidence, not an automatic diagnosis.** A process using resources is not proof that it caused lag or is malicious. Sampling is every 15 seconds, with older measurements summarized by minute; brief frame-time spikes may be missed. Workstation Lens does **not** directly measure FPS, frame times, temperatures, driver faults or CAD application response time. Its purpose is to narrow the investigation, not identify every possible cause.
 
 ## How it works
 
@@ -31,26 +39,24 @@ The collector runs in the Windows notification area, even when the dashboard is 
 - Keeps system/application trends for up to **90 days** and individual PID records for **14 days**.
 - Lets you choose a preset period or a custom date/time range. **Export** downloads a ZIP for that exact selection.
 
-### Exporting for an LLM
+### Investigate a slowdown with an LLM
 
-The ZIP contains four files:
+Choose the time window covering the slowdown, then click **Export**. The ZIP includes:
 
 | File | What it's for |
 |---|---|
-| `report.md` | Readable summary, percentiles, active applications and measurement caveats |
-| `evidence.json` | Structured evidence for deeper LLM or scripted analysis |
-| `workstation-lens-records.csv` | Detailed records for Excel or your own analysis |
+| `report.md` | Readable resource summary, percentiles, application activity and measurement caveats |
+| `evidence.json` | Structured measurements for deeper comparisons and analysis |
+| `workstation-lens-records.csv` | Machine, application and process history (filter by `record_type`) |
 | `README.txt` | Short guide to the files, columns and units |
 
-I usually start by attaching `report.md` and `evidence.json` to my LLM, with a specific question. For example, if I were considering downsizing a workstation:
+Attach `report.md` and `evidence.json` to the LLM of your choice (optionally the CSV), and ask something like:
 
-> My current PC has 96 GiB RAM and 32 GiB GPU VRAM. Could a 32 GiB RAM / 24 GiB VRAM machine handle the same work? Use the measurements to explain the risks, but don't treat memory usage as a hard minimum requirement. Note missing observations and suggest what to benchmark before buying.
+> My game stuttered / CAD became slow around [date and time]. Using only the recorded evidence in this export, did any background applications consume unusual CPU, memory or I/O? Was there sustained CPU/GPU pressure, a busy core, RAM/VRAM pressure, paging or high storage latency? Separate observations from possible explanations, flag missing measurements, and suggest controlled checks before I change software or buy hardware. Do not assume a process is malicious just because it used resources.
 
-![Example analysis of a Workstation Lens export](docs/screenshots/llm-analysis-example.png)
+Use the actual time zone when describing when the slowdown occurred; the export reports timestamps in UTC. Application summaries are aggregated over 15-minute periods, while individual process details are stored per minute, so not every 15-second spike can be attributed to a particular process.
 
-*Illustrative LLM-style analysis using anonymized measurements from a real local export. The 49.4 GiB peak was measured on the original 96 GiB RAM PC, not the proposed 32 GiB machine. Recreated for documentation; not a screenshot of a third-party chat.*
-
-The CSV contains machine, application and PID rows in one file; filter by `record_type`. Empty cells mean unavailable or not applicable, **not zero**.
+**Your data stays local until you decide to share it.** Workstation Lens does not call an LLM itself. Check application names and any workload notes in the export before uploading it to an external service. Empty CSV fields mean unavailable or not applicable, **not zero**.
 
 ## Try it
 
@@ -80,10 +86,16 @@ I checked the collector on **31 October 2026, around 19:00 UTC**, on a Windows 1
 
 The database had accumulated measurements over roughly **55 hours of wall-clock time**, with gaps where no data was recorded; it was **not a 90-day database-size test**. These figures come from *one machine*, not guaranteed limits or a sustained-load benchmark. CPU, memory and database size depend on the system, process count and retention history.
 
-The unsigned **self-contained installer test** was about **72 MiB**. Most of that is the bundled .NET / Windows runtime, not the application itself; a framework-dependent publish was about 2.8 MiB, but requires compatible runtimes already installed. No unsigned test installer is being offered as a public release.
+
+## Another use: planning a hardware change
+
+After you've checked for obvious background-workload problems, the same measurements can help you evaluate a proposed RAM/VRAM change. The example below uses anonymized aggregates from an actual workstation export to illustrate how an LLM might discuss trade-offs; it is **not** a genuine third-party chat screenshot or a recommendation to downgrade.
+
+![Illustrative hardware-sizing analysis based on a Workstation Lens export](docs/screenshots/llm-analysis-example.png)
+
+*Illustrative analysis: the 49.4 GiB RAM peak was measured on the original 96 GiB machine, not on the proposed 32 GiB configuration. Memory in use is not the same as a minimum hardware requirement; confirm proposed changes with actual workload tests.*
 
 ## Privacy and limitations
-
 Everything is recorded in `%LOCALAPPDATA%\WorkstationLens\measurements.db`. The dashboard listens on localhost and doesn't need a cloud account. **Nothing is automatically uploaded to an LLM.** You decide whether and where to share an export.
 
 Exports can include application names and any workload notes you enter. Check the files before attaching them to an online service. The collector doesn't capture document names, command lines, browser URLs or window titles.
